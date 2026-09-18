@@ -13,6 +13,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Formik } from "formik";
+import AppHeader from "../components/AppHeader";
 
 const ALL_STATES = [
   { code: "AL", name: "Alabama" },
@@ -99,6 +100,7 @@ export default function BusinessDetailsScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <AppHeader title="Business Details" navigation={navigation} />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
@@ -212,7 +214,7 @@ const COLORS = { bg: "#1A1A2E", card: "#16213E", accent: "#E2B96F", text: "#FFFF
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-  scroll: { paddingHorizontal: 24, paddingTop: 48, paddingBottom: 40 },
+  scroll: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40 },
   heading: { fontSize: 28, fontWeight: "700", color: COLORS.text, lineHeight: 36 },
   subheading: { fontSize: 15, color: COLORS.muted, marginTop: 8, marginBottom: 32 },
   form: { gap: 24 },

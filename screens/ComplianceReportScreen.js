@@ -11,10 +11,11 @@ import {
   Alert,
 } from 'react-native';
 import { chat } from '../services/aiService'; // ✅ Reuses shared Mistral client
+import AppHeader from '../components/AppHeader';
 
 // ✅ Fixed: no hardcoded real-world grant name as a fallback — missing params
 // produce an explicit error instead of a silently fabricated named document
-const ComplianceReportScreen = ({ route }) => {
+const ComplianceReportScreen = ({ navigation, route }) => {
   const { grantName, awardAmount } = route.params || {};
   const [report, setReport] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,11 +24,14 @@ const ComplianceReportScreen = ({ route }) => {
   if (!grantName || awardAmount == null) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Post-Award Compliance Vault</Text>
-        <View style={styles.placeholderBox}>
-          <Text style={styles.placeholderText}>
-            No grant selected. Navigate here from a saved grant to generate its compliance report.
-          </Text>
+        <AppHeader title="Compliance Vault" navigation={navigation} />
+        <View style={styles.body}>
+          <Text style={styles.title}>Post-Award Compliance Vault</Text>
+          <View style={styles.placeholderBox}>
+            <Text style={styles.placeholderText}>
+              No grant selected. Navigate here from a saved grant to generate its compliance report.
+            </Text>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -77,56 +81,60 @@ const ComplianceReportScreen = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Post-Award Compliance Vault</Text>
-      <Text style={styles.subtitle}>
-        Automated audit report for {grantName} (${amount.toLocaleString()}).
-      </Text>
-
-      {/* ✅ Fixed: legal disclaimer — AI output must not be filed as a real document */}
-      <View style={styles.disclaimerBox}>
-        <Text style={styles.disclaimerText}>
-          ⚠️ AI-generated draft only. Review with a qualified accountant or attorney
-          before submitting to any government or funding body.
+      <AppHeader title="Compliance Vault" navigation={navigation} />
+      <View style={styles.body}>
+        <Text style={styles.title}>Post-Award Compliance Vault</Text>
+        <Text style={styles.subtitle}>
+          Automated audit report for {grantName} (${amount.toLocaleString()}).
         </Text>
-      </View>
 
-      {report ? (
-        <ScrollView
-          style={styles.reportBox}
-          contentContainerStyle={styles.reportContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={styles.reportText}>{report}</Text>
-        </ScrollView>
-      ) : (
-        <View style={styles.placeholderBox}>
-          <Text style={styles.placeholderText}>
-            Link your bank via Plaid to auto-populate expenses, then tap below to
-            generate your AI draft compliance report.
+        {/* ✅ Fixed: legal disclaimer — AI output must not be filed as a real document */}
+        <View style={styles.disclaimerBox}>
+          <Text style={styles.disclaimerText}>
+            ⚠️ AI-generated draft only. Review with a qualified accountant or attorney
+            before submitting to any government or funding body.
           </Text>
         </View>
-      )}
 
-      {/* ✅ Fixed: disabled visual state applied when loading */}
-      <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={generateAuditReport}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
+        {report ? (
+          <ScrollView
+            style={styles.reportBox}
+            contentContainerStyle={styles.reportContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={styles.reportText}>{report}</Text>
+          </ScrollView>
         ) : (
-          <Text style={styles.buttonText}>
-            {report ? 'Regenerate Report' : 'Generate AI Audit Report'}
-          </Text>
+          <View style={styles.placeholderBox}>
+            <Text style={styles.placeholderText}>
+              Link your bank via Plaid to auto-populate expenses, then tap below to
+              generate your AI draft compliance report.
+            </Text>
+          </View>
         )}
-      </TouchableOpacity>
+
+        {/* ✅ Fixed: disabled visual state applied when loading */}
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={generateAuditReport}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>
+              {report ? 'Regenerate Report' : 'Generate AI Audit Report'}
+            </Text>
+          )}
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container:    { flex: 1, padding: 20, backgroundColor: '#f8f9fa' },
+  container:    { flex: 1, backgroundColor: '#f8f9fa' },
+  body:         { flex: 1, padding: 20 },
   title:        { fontSize: 22, fontWeight: 'bold', color: '#333', marginBottom: 4 },
   subtitle:     { fontSize: 14, color: '#666', marginBottom: 12 },
 

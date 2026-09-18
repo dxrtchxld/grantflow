@@ -14,6 +14,7 @@ import {
   ScrollView,
 } from "react-native";
 import { chat } from "../services/aiService";
+import AppHeader from "../components/AppHeader";
 
 export default function BusinessNameScreen({ navigation, route }) {
   const { businessType, ownerDetails } = route.params ?? {};
@@ -62,6 +63,7 @@ export default function BusinessNameScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <AppHeader title="Business Name" navigation={navigation} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <Text style={styles.heading}>Name your{"\n"}business</Text>
@@ -126,7 +128,7 @@ const COLORS = { bg: "#1A1A2E", card: "#16213E", accent: "#E2B96F", text: "#FFFF
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-  scroll: { paddingHorizontal: 24, paddingTop: 48, paddingBottom: 40, gap: 24 },
+  scroll: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40, gap: 24 },
   heading: { fontSize: 28, fontWeight: "700", color: COLORS.text, lineHeight: 36 },
   subheading: { fontSize: 15, color: COLORS.muted, marginTop: 8 },
   inputRow: { flexDirection: "row", gap: 10, alignItems: "center" },

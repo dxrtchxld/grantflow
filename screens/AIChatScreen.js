@@ -12,6 +12,7 @@ import {
   Platform,
 } from "react-native";
 import { chat } from "../services/aiService"; // ✅ Reuses shared Mistral client
+import AppHeader from "../components/AppHeader";
 
 const SYSTEM_PROMPT = {
   role: "system",
@@ -38,7 +39,7 @@ function TypingIndicator() {
 }
 
 // ── Main screen ───────────────────────────────────────────────────────────────
-const AIChatScreen = () => {
+const AIChatScreen = ({ navigation }) => {
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -93,9 +94,10 @@ const AIChatScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <AppHeader title="AI Assistant" navigation={navigation} />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.container}
+        style={styles.keyboardContainer}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
         <Text style={styles.title}>AI Funding Assistant</Text>
@@ -154,6 +156,7 @@ const AIChatScreen = () => {
 
 const styles = StyleSheet.create({
   container:  { flex: 1, backgroundColor: "#f8f9fa" },
+  keyboardContainer: { flex: 1 },
   title:      { fontSize: 20, fontWeight: "bold", textAlign: "center", marginVertical: 10, color: "#333" },
   chatList:   { padding: 16, paddingBottom: 8 },
 

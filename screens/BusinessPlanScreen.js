@@ -13,6 +13,7 @@ import {
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { generateBusinessPlan } from "../services/businessPlanService";
 import { db, auth } from "../firebase"; // ✅ Fixed: firebase.js is at the root, not in /services
+import AppHeader from "../components/AppHeader";
 
 const BusinessPlanScreen = ({ navigation, route }) => {
   const businessData = route.params;
@@ -79,41 +80,45 @@ const BusinessPlanScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Your AI Business Plan</Text>
-      <Text style={styles.subtitle}>
-        Review your custom summary generated for {businessData?.name}.
-      </Text>
-
-      {isLoading ? (
-        <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color="#3498db" />
-          <Text style={styles.loaderText}>Drafting your business roadmap...</Text>
-        </View>
-      ) : (
-        <ScrollView
-          style={styles.planContainer}
-          contentContainerStyle={styles.planContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={styles.planText}>{planText}</Text>
-        </ScrollView>
-      )}
-
-      <TouchableOpacity
-        style={[styles.button, (isLoading || isSaving) && styles.disabledButton]}
-        onPress={handleSaveAndContinue}
-        disabled={isLoading || isSaving}
-      >
-        <Text style={styles.buttonText}>
-          {isSaving ? "Saving Profile..." : "Save & Proceed to Grants"}
+      <AppHeader title="Business Plan" navigation={navigation} />
+      <View style={styles.body}>
+        <Text style={styles.title}>Your AI Business Plan</Text>
+        <Text style={styles.subtitle}>
+          Review your custom summary generated for {businessData?.name}.
         </Text>
-      </TouchableOpacity>
+
+        {isLoading ? (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#3498db" />
+            <Text style={styles.loaderText}>Drafting your business roadmap...</Text>
+          </View>
+        ) : (
+          <ScrollView
+            style={styles.planContainer}
+            contentContainerStyle={styles.planContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={styles.planText}>{planText}</Text>
+          </ScrollView>
+        )}
+
+        <TouchableOpacity
+          style={[styles.button, (isLoading || isSaving) && styles.disabledButton]}
+          onPress={handleSaveAndContinue}
+          disabled={isLoading || isSaving}
+        >
+          <Text style={styles.buttonText}>
+            {isSaving ? "Saving Profile..." : "Save & Proceed to Grants"}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#f8f9fa" },
+  container: { flex: 1, backgroundColor: "#f8f9fa" },
+  body: { flex: 1, padding: 20 },
   title: { fontSize: 24, fontWeight: "bold", color: "#333", marginBottom: 4 },
   subtitle: { fontSize: 14, color: "#666", marginBottom: 16 },
   loaderContainer: { flex: 1, justifyContent: "center", alignItems: "center" },

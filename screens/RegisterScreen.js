@@ -7,6 +7,7 @@ import {
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../firebase";
+import AppHeader from "../components/AppHeader";
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName]         = useState("");
@@ -58,6 +59,7 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <AppHeader title="Create Account" navigation={navigation} onBack={() => navigation.navigate("Login")} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.inner} keyboardShouldPersistTaps="handled">
           <Text style={styles.logo}>GrantFlow</Text>

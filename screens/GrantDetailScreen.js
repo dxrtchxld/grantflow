@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db, auth } from "../firebase"; // ✅ Fixed: correct root-level import path
+import AppHeader from "../components/AppHeader";
 
 const GrantDetailScreen = ({ route, navigation }) => {
   const { grant } = route.params; // ✅ Fixed: userId dropped — always derive from auth
@@ -60,6 +61,7 @@ const GrantDetailScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <AppHeader title="Grant Details" navigation={navigation} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>{grant.name}</Text>
         <Text style={styles.amount}>Funding Pool: {formattedAmount}</Text>

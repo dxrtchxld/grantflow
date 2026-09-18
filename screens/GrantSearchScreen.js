@@ -8,12 +8,14 @@ import {
   FlatList,
   TextInput,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { collection, onSnapshot } from "firebase/firestore";
 import { doc, setDoc, arrayUnion, serverTimestamp } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import GrantCard from "../components/GrantCard";
 import { evaluateGrantFinancialFit } from "../services/financialMatchService";
+import AppHeader from "../components/AppHeader";
 
 export default function GrantSearchScreen({ navigation }) {
   const [grants, setGrants] = useState([]);
@@ -94,6 +96,18 @@ export default function GrantSearchScreen({ navigation }) {
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <SafeAreaView style={styles.container}>
+      <AppHeader
+        title="Grant Search"
+        navigation={navigation}
+        rightElement={
+          <TouchableOpacity
+            style={styles.aiNavBtn}
+            onPress={() => navigation.navigate("AIChat")}
+          >
+            <Text style={styles.aiNavText}>✦ AI Chat</Text>
+          </TouchableOpacity>
+        }
+      />
       <Text style={styles.title}>Find Grants</Text>
       <Text style={styles.subtitle}>Opportunities matched to your business profile.</Text>
 
@@ -138,8 +152,21 @@ export default function GrantSearchScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container:   { flex: 1, backgroundColor: "#f8f9fa" },
-  title:       { fontSize: 24, fontWeight: "bold", color: "#333", paddingHorizontal: 20, paddingTop: 20, marginBottom: 2 },
+  title:       { fontSize: 24, fontWeight: "bold", color: "#333", paddingHorizontal: 20, paddingTop: 12, marginBottom: 2 },
   subtitle:    { fontSize: 14, color: "#666", paddingHorizontal: 20, marginBottom: 12 },
+  aiNavBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: "#22223B",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#E2B96F44",
+  },
+  aiNavText: {
+    color: "#E2B96F",
+    fontSize: 12,
+    fontWeight: "700",
+  },
   searchInput: {
     marginHorizontal: 20,
     marginBottom: 12,

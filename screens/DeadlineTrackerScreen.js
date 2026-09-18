@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase"; // ✅ Fixed: correct root-level import path
+import AppHeader from "../components/AppHeader";
 
 /**
  * Returns days remaining until a Firestore Timestamp deadline.
@@ -85,54 +86,58 @@ const DeadlineTrackerScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Grant Deadlines</Text>
-      <Text style={styles.subtitle}>
-        Active countdowns for your saved funding opportunities.
-      </Text>
+      <AppHeader title="Deadlines" navigation={navigation} />
+      <View style={styles.content}>
+        <Text style={styles.title}>Grant Deadlines</Text>
+        <Text style={styles.subtitle}>
+          Active countdowns for your saved funding opportunities.
+        </Text>
 
-      <FlatList
-        data={deadlines}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={deadlines.length === 0 && styles.emptyList}
-        ListEmptyComponent={<EmptyState />}
-        renderItem={({ item }) => {
-          const daysLeft = getDaysRemaining(item.deadline);
-          const { badge, label } = getUrgencyStyle(daysLeft);
+        <FlatList
+          data={deadlines}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={deadlines.length === 0 && styles.emptyList}
+          ListEmptyComponent={<EmptyState />}
+          renderItem={({ item }) => {
+            const daysLeft = getDaysRemaining(item.deadline);
+            const { badge, label } = getUrgencyStyle(daysLeft);
 
-          // ✅ Fixed: $ only shown for real numeric amounts
-          const amountLabel =
-            item.amount && item.amount > 0
-              ? `$${item.amount.toLocaleString()}`
-              : "TBD";
+            // ✅ Fixed: $ only shown for real numeric amounts
+            const amountLabel =
+              item.amount && item.amount > 0
+                ? `$${item.amount.toLocaleString()}`
+                : "TBD";
 
-          return (
-            <TouchableOpacity
-              style={[styles.card, daysLeft !== null && daysLeft < 0 && styles.cardExpired]}
-              onPress={() =>
-                // ✅ Fixed: userId dropped from nav params — GrantDetailScreen reads from auth
-                navigation.navigate("GrantDetail", { grant: item })
-              }
-              activeOpacity={0.8}
-            >
-              <View style={styles.row}>
-                <Text style={styles.grantTitle} numberOfLines={1}>
-                  {item.name}
-                </Text>
-                <View style={[styles.urgencyBadge, badge]}>
-                  <Text style={[styles.urgencyText, badge]}>{label}</Text>
+            return (
+              <TouchableOpacity
+                style={[styles.card, daysLeft !== null && daysLeft < 0 && styles.cardExpired]}
+                onPress={() =>
+                  // ✅ Fixed: userId dropped from nav params — GrantDetailScreen reads from auth
+                  navigation.navigate("GrantDetail", { grant: item })
+                }
+                activeOpacity={0.8}
+              >
+                <View style={styles.row}>
+                  <Text style={styles.grantTitle} numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <View style={[styles.urgencyBadge, badge]}>
+                    <Text style={[styles.urgencyText, badge]}>{label}</Text>
+                  </View>
                 </View>
-              </View>
-              <Text style={styles.amount}>{amountLabel}</Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
+                <Text style={styles.amount}>{amountLabel}</Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container:  { flex: 1, padding: 20, backgroundColor: "#f8f9fa" },
+  container:  { flex: 1, backgroundColor: "#f8f9fa" },
+  content:    { flex: 1, padding: 20 },
   title:      { fontSize: 24, fontWeight: "bold", color: "#333", marginBottom: 4 },
   subtitle:   { fontSize: 14, color: "#666", marginBottom: 20 },
 

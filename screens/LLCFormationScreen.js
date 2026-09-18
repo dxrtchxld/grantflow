@@ -14,6 +14,7 @@ import {
 import { createAtlasOrder } from "../services/stripeAtlas";
 import { db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import AppHeader from "../components/AppHeader";
 
 export default function LLCFormationScreen({ navigation, route }) {
   const { businessType, ownerDetails, businessName } = route.params ?? {};
@@ -87,6 +88,7 @@ export default function LLCFormationScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <AppHeader title="Review & Submit" navigation={navigation} />
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.heading}>Review &{"\n"}Submit</Text>
         <Text style={styles.subheading}>
@@ -137,7 +139,7 @@ const COLORS = { bg: "#1A1A2E", card: "#16213E", accent: "#E2B96F", text: "#FFFF
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-  scroll: { paddingHorizontal: 24, paddingTop: 48, paddingBottom: 40, gap: 24 },
+  scroll: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40, gap: 24 },
   heading: { fontSize: 28, fontWeight: "700", color: COLORS.text, lineHeight: 36 },
   subheading: { fontSize: 15, color: COLORS.muted, marginTop: 8 },
   summaryCard: {
