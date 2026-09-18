@@ -42,6 +42,8 @@ import LoginScreen    from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen"; // ✅ Restored: needed by Login's "Sign up" link
 
 // ── Onboarding ────────────────────────────────────────────────────────────────
+import WelcomeGuideScreen    from "./screens/WelcomeGuideScreen";
+import ExistingBusinessScreen from "./screens/ExistingBusinessScreen";
 import BusinessTypeScreen    from "./screens/BusinessTypeScreen";
 import BusinessDetailsScreen from "./screens/BusinessDetailsScreen";
 import BusinessNameScreen    from "./screens/BusinessNameScreen";
@@ -83,12 +85,14 @@ export default function App() {
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName={user ? "BusinessType" : "Login"}
+            initialRouteName={user ? "WelcomeGuide" : "Login"}
             screenOptions={{ headerShown: false }}
           >
             {/* Auth & onboarding */}
             <Stack.Screen name="Login"            component={LoginScreen}            />
             <Stack.Screen name="Register"         component={RegisterScreen}         />
+            <Stack.Screen name="WelcomeGuide"     component={WelcomeGuideScreen}     />
+            <Stack.Screen name="ExistingBusiness" component={ExistingBusinessScreen} />
             <Stack.Screen name="BusinessType"     component={BusinessTypeScreen}     />
             <Stack.Screen name="BusinessDetails"  component={BusinessDetailsScreen}  />
             <Stack.Screen name="BusinessName"     component={BusinessNameScreen}     />

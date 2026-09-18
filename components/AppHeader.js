@@ -9,7 +9,7 @@ export default function AppHeader({ title, navigation, onBack, rightElement, sho
     } else if (navigation?.canGoBack && navigation.canGoBack()) {
       navigation.goBack();
     } else if (navigation?.navigate) {
-      navigation.navigate("BusinessType");
+      navigation.navigate("WelcomeGuide");
     }
   };
 

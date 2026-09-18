@@ -30,7 +30,6 @@ export default function BusinessTypeScreen({ navigation }) {
       <AppHeader
         title="Formation Type"
         navigation={navigation}
-        onBack={() => navigation.navigate("Login")}
       />
       <View style={styles.content}>
         <Text style={styles.heading}>What type of business{"\n"}are you forming?</Text>

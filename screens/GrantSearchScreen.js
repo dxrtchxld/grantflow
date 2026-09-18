@@ -17,7 +17,8 @@ import GrantCard from "../components/GrantCard";
 import { evaluateGrantFinancialFit } from "../services/financialMatchService";
 import AppHeader from "../components/AppHeader";
 
-export default function GrantSearchScreen({ navigation }) {
+export default function GrantSearchScreen({ navigation, route }) {
+  const { businessProfile } = route?.params ?? {};
   const [grants, setGrants] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [query, setQuery] = useState("");
@@ -109,7 +110,19 @@ export default function GrantSearchScreen({ navigation }) {
         }
       />
       <Text style={styles.title}>Find Grants</Text>
-      <Text style={styles.subtitle}>Opportunities matched to your business profile.</Text>
+      <Text style={styles.subtitle}>
+        {businessProfile?.name
+          ? `Matched funding for ${businessProfile.name} (${businessProfile.state})`
+          : "Opportunities matched to your business profile."}
+      </Text>
+
+      {businessProfile?.name && (
+        <View style={styles.profileBadge}>
+          <Text style={styles.profileBadgeText}>
+            🏢 {businessProfile.name} • {businessProfile.state} • {businessProfile.entityType || "LLC"}
+          </Text>
+        </View>
+      )}
 
       <TextInput
         style={styles.searchInput}
@@ -166,6 +179,22 @@ const styles = StyleSheet.create({
     color: "#E2B96F",
     fontSize: 12,
     fontWeight: "700",
+  },
+  profileBadge: {
+    marginHorizontal: 20,
+    marginBottom: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: "#E2B96F15",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E2B96F44",
+    alignSelf: "flex-start",
+  },
+  profileBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#2C3E50",
   },
   searchInput: {
     marginHorizontal: 20,

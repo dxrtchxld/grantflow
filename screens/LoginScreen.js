@@ -59,7 +59,7 @@ export default function LoginScreen({ navigation }) {
       "Google Sign-In",
       "Google OAuth credentials need to be configured in your Firebase console. In the meantime, you can explore all features using Guest Demo Mode or Email Sign In.",
       [
-        { text: "Enter Guest Mode", onPress: () => navigation.navigate("BusinessType") },
+        { text: "Enter Guest Mode", onPress: () => navigation.navigate("WelcomeGuide") },
         { text: "Cancel", style: "cancel" },
       ]
     );
@@ -71,7 +71,7 @@ export default function LoginScreen({ navigation }) {
         "Apple Sign-In",
         "Apple Sign-In requires a standalone iOS build. Please use Guest Demo Mode or Email Sign In while running in Expo Go.",
         [
-          { text: "Enter Guest Mode", onPress: () => navigation.navigate("BusinessType") },
+          { text: "Enter Guest Mode", onPress: () => navigation.navigate("WelcomeGuide") },
           { text: "Cancel", style: "cancel" },
         ]
       );
@@ -121,7 +121,7 @@ export default function LoginScreen({ navigation }) {
             </Text>
             <TouchableOpacity
               style={styles.guestButton}
-              onPress={() => navigation.navigate("BusinessType")}
+              onPress={() => navigation.navigate("WelcomeGuide")}
             >
               <Text style={styles.guestButtonText}>Enter as Guest (Demo Mode) →</Text>
             </TouchableOpacity>
