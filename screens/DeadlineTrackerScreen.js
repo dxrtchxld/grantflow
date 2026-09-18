@@ -94,9 +94,11 @@ const DeadlineTrackerScreen = ({ navigation }) => {
         </Text>
 
         <FlatList
+          style={{ flex: 1 }}
           data={deadlines}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={deadlines.length === 0 && styles.emptyList}
+          contentContainerStyle={deadlines.length === 0 ? styles.emptyList : { flexGrow: 1, paddingBottom: 40 }}
+          showsVerticalScrollIndicator={true}
           ListEmptyComponent={<EmptyState />}
           renderItem={({ item }) => {
             const daysLeft = getDaysRemaining(item.deadline);

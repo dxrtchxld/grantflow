@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ScrollView,
 } from "react-native";
 import AppHeader from "../components/AppHeader";
 
@@ -31,7 +32,11 @@ export default function BusinessTypeScreen({ navigation }) {
         title="Formation Type"
         navigation={navigation}
       />
-      <View style={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={true}
+      >
         <Text style={styles.heading}>What type of business{"\n"}are you forming?</Text>
         <Text style={styles.subheading}>Choose the structure that fits your goals.</Text>
 
@@ -60,7 +65,7 @@ export default function BusinessTypeScreen({ navigation }) {
         >
           <Text style={styles.btnText}>Continue</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -69,7 +74,8 @@ const COLORS = { bg: "#1A1A2E", card: "#16213E", accent: "#E2B96F", text: "#FFFF
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-  content: { flex: 1, paddingHorizontal: 24, paddingTop: 20 },
+  scrollView: { flex: 1 },
+  scroll: { flexGrow: 1, paddingHorizontal: 24, paddingTop: 20, paddingBottom: 40 },
   heading: { fontSize: 28, fontWeight: "700", color: COLORS.text, lineHeight: 36 },
   subheading: { fontSize: 15, color: COLORS.muted, marginTop: 8, marginBottom: 32 },
   options: { gap: 12 },
@@ -86,7 +92,7 @@ const styles = StyleSheet.create({
   cardDesc: { fontSize: 13, color: COLORS.muted, marginTop: 4 },
   cardDescSelected: { color: COLORS.text },
   btn: {
-    marginTop: "auto",
+    marginTop: 24,
     marginBottom: 24,
     backgroundColor: COLORS.accent,
     borderRadius: 12,

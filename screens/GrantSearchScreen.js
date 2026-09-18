@@ -140,9 +140,11 @@ export default function GrantSearchScreen({ navigation, route }) {
         </View>
       ) : (
         <FlatList
+          style={styles.flatList}
           data={filtered}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={true}
           ListEmptyComponent={
             <View style={styles.empty}>
               <Text style={styles.emptyIcon}>🔍</Text>
@@ -208,7 +210,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#333",
   },
-  list:        { paddingHorizontal: 20, paddingBottom: 24 },
+  flatList:    { flex: 1 },
+  list:        { flexGrow: 1, paddingHorizontal: 20, paddingBottom: 40 },
   loader:      { flex: 1, justifyContent: "center", alignItems: "center", gap: 12 },
   loaderText:  { color: "#666", fontSize: 15 },
   empty:       { alignItems: "center", marginTop: 60, gap: 8 },

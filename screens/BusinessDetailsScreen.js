@@ -105,7 +105,13 @@ export default function BusinessDetailsScreen({ navigation, route }) {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled={true}
+          showsVerticalScrollIndicator={true}
+        >
           <Text style={styles.heading}>Tell us about{"\n"}yourself</Text>
           <Text style={styles.subheading}>We'll use this to prepare your formation documents.</Text>
 
@@ -214,7 +220,8 @@ const COLORS = { bg: "#1A1A2E", card: "#16213E", accent: "#E2B96F", text: "#FFFF
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-  scroll: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40 },
+  scrollView: { flex: 1 },
+  scroll: { flexGrow: 1, paddingHorizontal: 24, paddingTop: 16, paddingBottom: 60 },
   heading: { fontSize: 28, fontWeight: "700", color: COLORS.text, lineHeight: 36 },
   subheading: { fontSize: 15, color: COLORS.muted, marginTop: 8, marginBottom: 32 },
   form: { gap: 24 },

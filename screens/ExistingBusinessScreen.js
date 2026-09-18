@@ -153,7 +153,13 @@ export default function ExistingBusinessScreen({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled={true}
+          showsVerticalScrollIndicator={true}
+        >
           <GrantGuideMascot
             message="Great! Tell me a little about your business so I can find the best matching grants for your state and industry."
             subtitle="You don't have to file anything new — just connect your details."
@@ -291,10 +297,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.bg,
   },
+  scrollView: {
+    flex: 1,
+  },
   scroll: {
+    flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 12,
-    paddingBottom: 40,
+    paddingBottom: 60,
   },
   form: {
     marginTop: 16,

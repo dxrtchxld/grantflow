@@ -104,7 +104,12 @@ export default function LoginScreen({ navigation }) {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={true}
+        >
           {/* Header */}
           <View style={styles.headerContainer}>
             <Text style={styles.logoText}>GrantFlow</Text>
@@ -203,7 +208,7 @@ export default function LoginScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#1A1A2E" },
-  scrollContainer: { padding: 24, paddingBottom: 40, justifyContent: "center" },
+  scrollContainer: { flexGrow: 1, padding: 24, paddingBottom: 48, justifyContent: "center" },
   headerContainer: { marginTop: 20, marginBottom: 24, alignItems: "center" },
   logoText: { fontSize: 38, fontWeight: "bold", color: "#E2B96F", letterSpacing: 1 },
   subtitle: { fontSize: 15, color: "#A0A0B0", textAlign: "center", marginTop: 8, paddingHorizontal: 16 },

@@ -96,7 +96,7 @@ const BusinessPlanScreen = ({ navigation, route }) => {
           <ScrollView
             style={styles.planContainer}
             contentContainerStyle={styles.planContent}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={true}
           >
             <Text style={styles.planText}>{planText}</Text>
           </ScrollView>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     borderColor: "#e0e0e0",
     marginBottom: 16,
   },
-  planContent: { padding: 16 },
+  planContent: { flexGrow: 1, padding: 16 },
   planText: { fontSize: 15, color: "#333", lineHeight: 22 },
   button: { backgroundColor: "#2ecc71", padding: 16, borderRadius: 12, alignItems: "center" },
   disabledButton: { backgroundColor: "#95a5a6" },

@@ -100,7 +100,7 @@ const ComplianceReportScreen = ({ navigation, route }) => {
           <ScrollView
             style={styles.reportBox}
             contentContainerStyle={styles.reportContent}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={true}
           >
             <Text style={styles.reportText}>{report}</Text>
           </ScrollView>
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
 
   // ── Report / placeholder
   reportBox:    { flex: 1, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#e0e0e0', marginBottom: 20 },
-  reportContent: { padding: 16 },
+  reportContent: { flexGrow: 1, padding: 16 },
   reportText:   { fontSize: 14, color: '#333', lineHeight: 22 },
   placeholderBox: {
     flex: 1,

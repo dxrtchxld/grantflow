@@ -20,7 +20,12 @@ export default function WelcomeGuideScreen({ navigation }) {
         onBack={() => navigation.navigate("Login")}
       />
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={true}
+        nestedScrollEnabled={true}
+      >
         <GrantGuideMascot
           message="Welcome! Whether you're an established business or just exploring ideas, I'll guide you to the right funding."
           subtitle="Select where you'd like to begin below:"
@@ -117,10 +122,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.bg,
   },
+  scrollView: {
+    flex: 1,
+  },
   scroll: {
+    flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 12,
-    paddingBottom: 36,
+    paddingBottom: 48,
   },
   cardsContainer: {
     marginTop: 16,

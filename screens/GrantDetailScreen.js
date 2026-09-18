@@ -62,7 +62,11 @@ const GrantDetailScreen = ({ route, navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <AppHeader title="Grant Details" navigation={navigation} />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={true}
+      >
         <Text style={styles.title}>{grant.name}</Text>
         <Text style={styles.amount}>Funding Pool: {formattedAmount}</Text>
 
@@ -106,7 +110,7 @@ const GrantDetailScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   container:       { flex: 1, backgroundColor: "#f8f9fa" },
-  scrollContent:   { padding: 20 },
+  scrollContent:   { flexGrow: 1, padding: 20 },
   title:           { fontSize: 26, fontWeight: "bold", color: "#333", marginBottom: 8 },
   amount:          { fontSize: 20, fontWeight: "600", color: "#27ae60", marginBottom: 20 },
   section:         { backgroundColor: "#fff", padding: 16, borderRadius: 12, marginBottom: 16, borderWidth: 1, borderColor: "#e0e0e0" },

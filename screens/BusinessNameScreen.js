@@ -65,7 +65,12 @@ export default function BusinessNameScreen({ navigation, route }) {
     <SafeAreaView style={styles.container}>
       <AppHeader title="Business Name" navigation={navigation} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={true}
+        >
           <Text style={styles.heading}>Name your{"\n"}business</Text>
           <Text style={styles.subheading}>Enter a name or let AI suggest options for you.</Text>
 
@@ -128,7 +133,8 @@ const COLORS = { bg: "#1A1A2E", card: "#16213E", accent: "#E2B96F", text: "#FFFF
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-  scroll: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40, gap: 24 },
+  scrollView: { flex: 1 },
+  scroll: { flexGrow: 1, paddingHorizontal: 24, paddingTop: 16, paddingBottom: 60, gap: 24 },
   heading: { fontSize: 28, fontWeight: "700", color: COLORS.text, lineHeight: 36 },
   subheading: { fontSize: 15, color: COLORS.muted, marginTop: 8 },
   inputRow: { flexDirection: "row", gap: 10, alignItems: "center" },

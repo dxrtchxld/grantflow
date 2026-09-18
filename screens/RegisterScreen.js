@@ -61,7 +61,12 @@ export default function RegisterScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       <AppHeader title="Create Account" navigation={navigation} onBack={() => navigation.navigate("Login")} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.inner} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.inner}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={true}
+        >
           <Text style={styles.logo}>GrantFlow</Text>
           <Text style={styles.tagline}>Create your account.</Text>
 
