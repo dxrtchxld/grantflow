@@ -82,7 +82,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <SafeAreaProvider>
+      <SafeAreaProvider style={{ flex: 1, width: "100%", height: "100%", minHeight: 0 }}>
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName={user ? "WelcomeGuide" : "Login"}
