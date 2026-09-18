@@ -1,113 +1,105 @@
-// components/GrantCard.js
+// components/GrantCard.js — Upgraded with AI match score, source badge, Write Proposal button
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-/**
- * Returns badge styles based on match score thresholds.
- * ≥ 75 → green  |  ≥ 50 → amber  |  < 50 → red
- */
 function getScoreStyle(score) {
-  if (score >= 75) return { badge: styles.scoreBadgeHigh,  text: styles.scoreTextHigh  };
-  if (score >= 50) return { badge: styles.scoreBadgeMid,   text: styles.scoreTextMid   };
-  return             { badge: styles.scoreBadgeLow,   text: styles.scoreTextLow   };
+  if (score >= 75) return { badge: styles.scoreBadgeHigh, text: styles.scoreTextHigh };
+  if (score >= 50) return { badge: styles.scoreBadgeMid,  text: styles.scoreTextMid  };
+  return             { badge: styles.scoreBadgeLow,  text: styles.scoreTextLow  };
 }
 
-/** Format the funding amount — handles numbers, missing values, and "Varies". */
 function formatAmount(amount) {
-  if (amount == null || amount === "") return "Amount Varies";
+  if (amount == null || amount === "" || amount === 0) return "Amount Varies";
   if (typeof amount === "string") return amount;
-  if (amount === 0) return "Amount Varies";
   return `$${amount.toLocaleString()}`;
 }
 
-const GrantCard = ({ grant, onSave, onDiscard, onPress }) => {
-  const score = grant.matchScore ?? 85;
-  const { badge: badgeStyle, text: scoreTextStyle } = getScoreStyle(score);
+function formatDeadline(deadline) {
+  if (!deadline) return null;
+  if (typeof deadline === "string") return deadline;
+  if (deadline?.toDate) return deadline.toDate().toLocaleDateString();
+  return null;
+}
+
+const GrantCard = ({ grant, onSave, onDiscard, onPress, onStartProposal }) => {
+  const score     = grant.matchScore ?? null;
+  const showScore = score !== null && score !== undefined;
+  const { badge: badgeStyle, text: scoreTextStyle } = showScore ? getScoreStyle(score) : { badge: {}, text: {} };
+  const deadline  = formatDeadline(grant.deadline);
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
       <View style={styles.headerRow}>
-        <Text style={styles.grantName} numberOfLines={1}>
-          {grant.name}
-        </Text>
-        <View style={[styles.scoreBadge, badgeStyle]}>
-          <Text style={[styles.scoreText, scoreTextStyle]}>{score}% Match</Text>
-        </View>
+        <Text style={styles.grantName} numberOfLines={2}>{grant.name}</Text>
+        {showScore && (
+          <View style={[styles.scoreBadge, badgeStyle]}>
+            <Text style={[styles.scoreText, scoreTextStyle]}>{score}%</Text>
+            <Text style={[styles.scoreLabel, scoreTextStyle]}>Match</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Source + agency */}
+      <View style={styles.pillRow}>
+        {grant.source && (
+          <View style={styles.sourcePill}>
+            <Text style={styles.sourcePillText}>{grant.source}</Text>
+          </View>
+        )}
+        {grant.agency ? (
+          <Text style={styles.agencyText} numberOfLines={1}>{grant.agency}</Text>
+        ) : null}
       </View>
 
       <Text style={styles.amountText}>{formatAmount(grant.amount)}</Text>
-      <Text style={styles.descriptionText} numberOfLines={2}>
-        {grant.description}
-      </Text>
+      <Text style={styles.descriptionText} numberOfLines={2}>{grant.description}</Text>
+      {deadline && <Text style={styles.deadlineText}>📅 {deadline}</Text>}
 
-      {/* onStartShouldSetResponder captures touches here so they don't
-          bubble up to the outer TouchableOpacity card press handler */}
       <View style={styles.actionRow} onStartShouldSetResponder={() => true}>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.discardButton]}
-          onPress={onDiscard}
-          activeOpacity={0.75}
-        >
-          <Text style={styles.discardButtonText}>Discard</Text>
+        <TouchableOpacity style={[styles.actionBtn, styles.discardBtn]} onPress={onDiscard} activeOpacity={0.75}>
+          <Text style={styles.discardBtnText}>Discard</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.saveButton]}
-          onPress={onSave}
-          activeOpacity={0.75}
-        >
-          <Text style={styles.saveButtonText}>Save Grant</Text>
+        <TouchableOpacity style={[styles.actionBtn, styles.saveBtn]} onPress={onSave} activeOpacity={0.75}>
+          <Text style={styles.saveBtnText}>Save</Text>
         </TouchableOpacity>
+        {onStartProposal && (
+          <TouchableOpacity style={[styles.actionBtn, styles.proposalBtn]} onPress={onStartProposal} activeOpacity={0.75}>
+            <Text style={styles.proposalBtnText}>✨ Propose</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  grantName: { fontSize: 18, fontWeight: "bold", color: "#333", flex: 1, marginRight: 8 },
-
-  // ── Score badge — base
-  scoreBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
-  scoreText:  { fontWeight: "bold", fontSize: 12 },
-
-  // ── Score badge — high (≥ 75%)
+  card: { backgroundColor: "#fff", borderRadius: 16, padding: 18, marginBottom: 16, borderWidth: 1, borderColor: "#e0e0e0", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
+  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, gap: 8 },
+  grantName: { fontSize: 17, fontWeight: "bold", color: "#333", flex: 1 },
+  scoreBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, alignItems: "center", minWidth: 52 },
+  scoreText:  { fontWeight: "800", fontSize: 14, lineHeight: 16 },
+  scoreLabel: { fontWeight: "700", fontSize: 9, letterSpacing: 0.5 },
   scoreBadgeHigh: { backgroundColor: "#e8f8f5" },
   scoreTextHigh:  { color: "#27ae60" },
-
-  // ── Score badge — mid (50–74%)
-  scoreBadgeMid: { backgroundColor: "#fef9e7" },
-  scoreTextMid:  { color: "#d4ac0d" },
-
-  // ── Score badge — low (< 50%)
-  scoreBadgeLow: { backgroundColor: "#fdf2f2" },
-  scoreTextLow:  { color: "#c0392b" },
-
-  amountText:      { fontSize: 20, fontWeight: "bold", color: "#2980b9", marginBottom: 8 },
-  descriptionText: { fontSize: 14, color: "#666", marginBottom: 16 },
-  actionRow:       { flexDirection: "row", justifyContent: "space-between", gap: 12 },
-  actionButton:    { flex: 1, padding: 12, borderRadius: 10, alignItems: "center" },
-  discardButton:   { backgroundColor: "#fdf2f2" },
-  discardButtonText: { color: "#c0392b", fontWeight: "bold" },
-  saveButton:      { backgroundColor: "#3498db" },
-  saveButtonText:  { color: "#fff", fontWeight: "bold" },
+  scoreBadgeMid:  { backgroundColor: "#fef9e7" },
+  scoreTextMid:   { color: "#d4ac0d" },
+  scoreBadgeLow:  { backgroundColor: "#fdf2f2" },
+  scoreTextLow:   { color: "#c0392b" },
+  pillRow:        { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
+  sourcePill:     { backgroundColor: "#f0f4ff", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  sourcePillText: { color: "#3498db", fontSize: 11, fontWeight: "700" },
+  agencyText:     { color: "#888", fontSize: 11, flex: 1 },
+  amountText:     { fontSize: 19, fontWeight: "bold", color: "#2980b9", marginBottom: 6 },
+  descriptionText: { fontSize: 14, color: "#666", marginBottom: 8, lineHeight: 19 },
+  deadlineText:   { fontSize: 12, color: "#999", marginBottom: 12 },
+  actionRow:      { flexDirection: "row", gap: 8 },
+  actionBtn:      { flex: 1, paddingVertical: 10, borderRadius: 10, alignItems: "center" },
+  discardBtn:     { backgroundColor: "#fdf2f2" },
+  discardBtnText: { color: "#c0392b", fontWeight: "700", fontSize: 13 },
+  saveBtn:        { backgroundColor: "#3498db" },
+  saveBtnText:    { color: "#fff", fontWeight: "700", fontSize: 13 },
+  proposalBtn:    { backgroundColor: "#E2B96F" },
+  proposalBtnText: { color: "#1A1A2E", fontWeight: "700", fontSize: 13 },
 });
 
 export default GrantCard;

@@ -4,7 +4,7 @@ import React, { useEffect, useState, Component } from "react";
 import { ActivityIndicator, View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { SafeAreaProvider } from "react-native-safe-area-context"; // ✅ Required by every SafeAreaView
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { onAuthStateChanged } from "@firebase/auth/dist/rn/index.js";
 import { auth } from "./firebase";
 
@@ -39,7 +39,7 @@ class ErrorBoundary extends Component {
 
 // ── Auth screens ──────────────────────────────────────────────────────────────
 import LoginScreen    from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen"; // ✅ Restored: needed by Login's "Sign up" link
+import RegisterScreen from "./screens/RegisterScreen";
 
 // ── Onboarding ────────────────────────────────────────────────────────────────
 import WelcomeGuideScreen    from "./screens/WelcomeGuideScreen";
@@ -48,7 +48,7 @@ import BusinessTypeScreen    from "./screens/BusinessTypeScreen";
 import BusinessDetailsScreen from "./screens/BusinessDetailsScreen";
 import BusinessNameScreen    from "./screens/BusinessNameScreen";
 import LLCFormationScreen    from "./screens/LLCFormationScreen";
-import BusinessPlanScreen    from "./screens/BusinessPlanScreen"; // ✅ Restored: navigated to from LLCFormationScreen
+import BusinessPlanScreen    from "./screens/BusinessPlanScreen";
 
 // ── Grant flow ────────────────────────────────────────────────────────────────
 import GrantSearchScreen     from "./screens/GrantSearchScreen";
@@ -59,11 +59,15 @@ import DeadlineTrackerScreen from "./screens/DeadlineTrackerScreen";
 import AIChatScreen           from "./screens/AIChatScreen";
 import ComplianceReportScreen from "./screens/ComplianceReportScreen";
 
+// ── NEW: Proposal editor & analytics dashboard ───────────────────────────────
+import ProposalEditorScreen      from "./screens/ProposalEditorScreen";
+import AnalyticsDashboardScreen  from "./screens/AnalyticsDashboardScreen";
+
 const Stack = createStackNavigator();
 
 // ── Unified Navigator ─────────────────────────────────────────────────────────
 export default function App() {
-  const [user, setUser] = useState(undefined); // undefined = auth state still resolving
+  const [user, setUser] = useState(undefined);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -107,6 +111,10 @@ export default function App() {
             {/* AI & compliance */}
             <Stack.Screen name="AIChat"           component={AIChatScreen}           />
             <Stack.Screen name="ComplianceReport" component={ComplianceReportScreen} />
+
+            {/* NEW: Proposal editor & analytics */}
+            <Stack.Screen name="ProposalEditor"      component={ProposalEditorScreen}     />
+            <Stack.Screen name="AnalyticsDashboard"  component={AnalyticsDashboardScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

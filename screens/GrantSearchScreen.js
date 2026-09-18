@@ -93,6 +93,11 @@ export default function GrantSearchScreen({ navigation, route }) {
   function handlePress(grant) {
     navigation.navigate("GrantDetail", { grant });
   }
+  function handleStartProposal(grant) {
+    navigation.navigate("ProposalEditor", { grant, orgContext: businessProfile || {} });
+  }
+
+
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -157,6 +162,7 @@ export default function GrantSearchScreen({ navigation, route }) {
               onPress={() => handlePress(item)}
               onSave={() => handleSave(item)}
               onDiscard={() => handleDiscard(item)}
+              onStartProposal={() => handleStartProposal(item)}
             />
           )}
         />

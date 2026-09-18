@@ -29,6 +29,14 @@ service cloud.firestore {
           && d.status  is string && d.status.size() < 32;
     }
 
+    function validProposal() {
+      let d = request.resource.data;
+      return d.userId    is string
+          && d.grantId   is string
+          && d.sections  is map
+          && d.status    is string && d.status.size() < 32;
+    }
+
     // Users — owner only, field-restricted writes
     match /users/{userId} {
       allow read:   if isOwner(userId);
@@ -68,7 +76,21 @@ service cloud.firestore {
     match /llcOrders/{orderId} {
       allow read:   if isAuthenticated() && resource.data.email == request.auth.token.email;
       allow create: if isAuthenticated();
-      allow update, delete: if false; // Managed via Admin SDK only
+      allow update, delete: if false;
+    }
+
+    // Proposals — owner-scoped, validated
+    match /proposals/{proposalId} {
+      allow read:   if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid && validProposal();
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && validProposal();
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // Notifications — owner-read, system-write (Admin SDK only)
+    match /notifications/{notifId} {
+      allow read:   if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow write:  if false; // created by Cloud Functions only
     }
   }
 }

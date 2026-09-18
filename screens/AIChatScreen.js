@@ -1,35 +1,30 @@
-// screens/AIChatScreen.js
-import React, { useState, useRef, useCallback } from "react";
+// screens/AIChatScreen.js — Upgraded: grant context, suggested prompts, copy on long-press
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  SafeAreaView,
-  FlatList,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
+  View, Text, TextInput, StyleSheet, SafeAreaView, FlatList,
+  TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView,
+  Clipboard, Alert,
 } from "react-native";
-import { chat } from "../services/aiService"; // ✅ Reuses shared Mistral client
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db, auth } from "../firebase";
+import { chat } from "../services/aiService";
 import AppHeader from "../components/AppHeader";
 
-const SYSTEM_PROMPT = {
-  role: "system",
-  content:
-    "You are a helpful grant writing assistant for small businesses. " +
-    "Provide clear, concise, and actionable advice about grant applications, " +
-    "eligibility requirements, deadlines, and funding strategies. " +
-    "Keep responses under 150 words.",
+const COLORS = {
+  bg: "#1A1A2E", card: "#16213E", cardBorder: "#2A2A44",
+  accent: "#E2B96F", text: "#FFFFFF", muted: "#A0A0B0",
+  green: "#2ecc71", blue: "#3498db",
 };
 
-const INITIAL_MESSAGE = {
-  id: "0",
-  text: "Hello! I'm your AI grant assistant. Ask me anything about your application status or matching strategy.",
-  sender: "ai",
-};
+const SUGGESTED_PROMPTS = [
+  "What types of grants am I most likely to qualify for?",
+  "How do I write a strong executive summary?",
+  "What's the difference between a nonprofit grant and a business grant?",
+  "Help me explain my project in 100 words for a grant",
+  "What goes in a budget narrative?",
+  "How do I find my DUNS/UEI number for federal grants?",
+];
 
-// ── Typing indicator bubble ───────────────────────────────────────────────────
 function TypingIndicator() {
   return (
     <View style={[styles.bubble, styles.aiBubble, styles.typingBubble]}>
@@ -38,112 +33,153 @@ function TypingIndicator() {
   );
 }
 
-// ── Main screen ───────────────────────────────────────────────────────────────
+function buildSystemPrompt(grantContext) {
+  let base = "You are a helpful grant writing assistant for small businesses and nonprofits. " +
+    "Provide clear, concise, and actionable advice about grant applications, eligibility, deadlines, and funding strategies. " +
+    "Keep responses under 200 words unless asked for longer content.";
+
+  if (grantContext.length > 0) {
+    const grantList = grantContext.map(g => `- ${g.name} (${g.amount > 0 ? "$" + g.amount.toLocaleString() : "varies"})`).join("\n");
+    base += `\n\nThe user has saved these grants:\n${grantList}\nReference them when relevant to give personalized advice.`;
+  }
+  return base;
+}
+
 const AIChatScreen = ({ navigation }) => {
-  const [messages, setMessages] = useState([INITIAL_MESSAGE]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([{
+    id: "0",
+    text: "Hello! I'm your AI grant assistant. I can help with proposals, eligibility questions, and finding the right funding. What would you like to know?",
+    sender: "ai",
+  }]);
+  const [input, setInput]             = useState("");
+  const [loading, setLoading]         = useState(false);
+  const [grantContext, setGrantContext] = useState([]);
+  const [useContext, setUseContext]    = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const listRef = useRef(null);
 
   const scrollToBottom = useCallback(() => {
-    // Small delay lets FlatList finish rendering the new item first
     setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
   }, []);
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
+  // Load saved grants for context
+  useEffect(() => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+    getDocs(query(collection(db, "grants"), where("savedBy", "array-contains", uid)))
+      .then(snap => setGrantContext(snap.docs.map(d => ({ id: d.id, ...d.data() })).slice(0, 8)))
+      .catch(() => {});
+  }, []);
 
-    const userMsg = { id: Date.now().toString(), text: input.trim(), sender: "user" };
-    setMessages((prev) => [...prev, userMsg]);
+  const handleSend = async (overrideText) => {
+    const text = (overrideText || input).trim();
+    if (!text || loading) return;
+
+    const userMsg = { id: Date.now().toString(), text, sender: "user" };
+    setMessages(prev => [...prev, userMsg]);
     setInput("");
     setLoading(true);
+    setShowSuggestions(false);
     scrollToBottom();
 
-    // ✅ Fixed: build the full conversation history so the AI retains context
-    // across turns — only include role + content (strip UI-only 'id'/'sender' fields)
+    const systemPrompt = {
+      role: "system",
+      content: buildSystemPrompt(useContext ? grantContext : []),
+    };
+
     const history = [
-      SYSTEM_PROMPT,
-      ...messages.map((m) => ({
+      systemPrompt,
+      ...messages.map(m => ({
         role: m.sender === "user" ? "user" : "assistant",
         content: m.text,
       })),
-      { role: "user", content: userMsg.text },
+      { role: "user", content: text },
     ];
 
     try {
-      // ✅ Fixed: reuses chat() which calls /v1/chat/completions correctly
       const aiText = await chat(history, "mistral-small-latest");
-      setMessages((prev) => [
-        ...prev,
-        { id: `${Date.now()}-ai`, text: aiText, sender: "ai" },
-      ]);
+      setMessages(prev => [...prev, { id: `${Date.now()}-ai`, text: aiText, sender: "ai" }]);
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `${Date.now()}-err`,
-          text: "Sorry, I couldn't reach the assistant. Please try again.",
-          sender: "ai",
-        },
-      ]);
+      setMessages(prev => [...prev, {
+        id: `${Date.now()}-err`,
+        text: "Sorry, I couldn't reach the assistant. Check your connection and Mistral API key.",
+        sender: "ai",
+      }]);
     } finally {
       setLoading(false);
       scrollToBottom();
     }
   };
 
+  const handleLongPress = (text) => {
+    Clipboard.setString(text);
+    Alert.alert("Copied", "Message copied to clipboard.");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <AppHeader title="AI Assistant" navigation={navigation} />
+
+      {/* Context toggle */}
+      {grantContext.length > 0 && (
+        <TouchableOpacity style={styles.contextToggle} onPress={() => setUseContext(v => !v)}>
+          <View style={[styles.contextDot, useContext && styles.contextDotActive]} />
+          <Text style={styles.contextToggleText}>
+            {useContext ? "Grant context ON" : "Grant context OFF"} ({grantContext.length} saved)
+          </Text>
+        </TouchableOpacity>
+      )}
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={styles.keyboardContainer}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
-        <Text style={styles.title}>AI Funding Assistant</Text>
-
         <FlatList
           ref={listRef}
           data={messages}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           contentContainerStyle={styles.chatList}
-          onContentSizeChange={scrollToBottom}  // ✅ auto-scroll on new content
+          onContentSizeChange={scrollToBottom}
           renderItem={({ item }) => (
-            <View
-              style={[
-                styles.bubble,
-                item.sender === "user" ? styles.userBubble : styles.aiBubble,
-              ]}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onLongPress={() => handleLongPress(item.text)}
+              style={[styles.bubble, item.sender === "user" ? styles.userBubble : styles.aiBubble]}
             >
-              {/* ✅ Fixed: separate text color per sender — white on blue, dark on grey */}
-              <Text
-                style={[
-                  styles.bubbleText,
-                  item.sender === "user" ? styles.userBubbleText : styles.aiBubbleText,
-                ]}
-              >
+              <Text style={[styles.bubbleText, item.sender === "user" ? styles.userBubbleText : styles.aiBubbleText]}>
                 {item.text}
               </Text>
-            </View>
+            </TouchableOpacity>
           )}
           ListFooterComponent={loading ? <TypingIndicator /> : null}
+          ListHeaderComponent={showSuggestions && messages.length <= 1 ? (
+            <View style={styles.suggestionsBox}>
+              <Text style={styles.suggestionsTitle}>Try asking:</Text>
+              {SUGGESTED_PROMPTS.map((p, i) => (
+                <TouchableOpacity key={i} style={styles.suggestion} onPress={() => handleSend(p)}>
+                  <Text style={styles.suggestionText}>{p}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : null}
         />
 
         <View style={styles.inputRow}>
           <TextInput
             style={styles.textInput}
-            placeholder="Type a question..."
-            placeholderTextColor="#aaa"
+            placeholder="Ask about grants, proposals, eligibility..."
+            placeholderTextColor="#888"
             value={input}
             onChangeText={setInput}
-            onSubmitEditing={handleSend}
+            onSubmitEditing={() => handleSend()}
             returnKeyType="send"
             editable={!loading}
+            multiline
           />
-          {/* ✅ Fixed: disabled + dimmed while loading to prevent double-sends */}
           <TouchableOpacity
             style={[styles.sendBtn, loading && styles.sendBtnDisabled]}
-            onPress={handleSend}
+            onPress={() => handleSend()}
             disabled={loading}
           >
             <Text style={styles.sendText}>Send</Text>
@@ -155,47 +191,35 @@ const AIChatScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container:  { flex: 1, backgroundColor: "#f8f9fa" },
+  container:         { flex: 1, backgroundColor: COLORS.bg },
   keyboardContainer: { flex: 1 },
-  title:      { fontSize: 20, fontWeight: "bold", textAlign: "center", marginVertical: 10, color: "#333" },
-  chatList:   { padding: 16, paddingBottom: 8 },
 
+  contextToggle: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: COLORS.cardBorder, gap: 8 },
+  contextDot:    { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.muted },
+  contextDotActive: { backgroundColor: COLORS.green },
+  contextToggleText: { color: COLORS.muted, fontSize: 12 },
+
+  chatList:   { padding: 16, paddingBottom: 8 },
   bubble:     { maxWidth: "80%", padding: 12, borderRadius: 16, marginBottom: 10 },
   userBubble: { backgroundColor: "#3498db", alignSelf: "flex-end", borderBottomRightRadius: 4 },
-  aiBubble:   { backgroundColor: "#e0e0e0", alignSelf: "flex-start", borderBottomLeftRadius: 4 },
-
-  // ✅ Fixed: distinct colors per sender
+  aiBubble:   { backgroundColor: COLORS.card, alignSelf: "flex-start", borderBottomLeftRadius: 4, borderWidth: 1, borderColor: COLORS.cardBorder },
   bubbleText:     { fontSize: 15, lineHeight: 21 },
-  userBubbleText: { color: "#fff"  },
-  aiBubbleText:   { color: "#333" },
+  userBubbleText: { color: "#fff" },
+  aiBubbleText:   { color: COLORS.text },
 
-  // ── Typing indicator
   typingBubble: { paddingVertical: 10, paddingHorizontal: 16 },
-  typingDots:   { fontSize: 12, color: "#999", letterSpacing: 4 },
+  typingDots:   { fontSize: 12, color: COLORS.muted, letterSpacing: 4 },
 
-  // ── Input row
-  inputRow: {
-    flexDirection: "row",
-    padding: 12,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderTopColor: "#e0e0e0",
-    gap: 8,
-  },
-  textInput: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    height: 44,
-    fontSize: 15,
-    color: "#333",
-  },
-  sendBtn:         { backgroundColor: "#2ecc71", justifyContent: "center", paddingHorizontal: 16, borderRadius: 8, height: 44 },
-  sendBtnDisabled: { backgroundColor: "#95a5a6" },
-  sendText:        { color: "#fff", fontWeight: "bold" },
+  suggestionsBox:   { marginBottom: 16, gap: 8 },
+  suggestionsTitle: { color: COLORS.muted, fontSize: 12, fontWeight: "700", marginBottom: 4 },
+  suggestion:       { backgroundColor: COLORS.card, borderRadius: 10, padding: 12, borderWidth: 1, borderColor: COLORS.cardBorder },
+  suggestionText:   { color: COLORS.text, fontSize: 13 },
+
+  inputRow: { flexDirection: "row", padding: 12, backgroundColor: COLORS.card, borderTopWidth: 1, borderTopColor: COLORS.cardBorder, gap: 8, alignItems: "flex-end" },
+  textInput: { flex: 1, backgroundColor: COLORS.bg, borderWidth: 1, borderColor: COLORS.cardBorder, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, fontSize: 15, color: COLORS.text, maxHeight: 100 },
+  sendBtn:        { backgroundColor: COLORS.accent, justifyContent: "center", paddingHorizontal: 16, borderRadius: 10, height: 44 },
+  sendBtnDisabled: { backgroundColor: "#555" },
+  sendText:       { color: COLORS.bg, fontWeight: "700" },
 });
 
 export default AIChatScreen;

@@ -100,6 +100,30 @@ export default function WelcomeGuideScreen({ navigation }) {
               <Text style={styles.cardActionText}>Start Business Formation →</Text>
             </View>
           </TouchableOpacity>
+
+          {/* Option 4: Analytics Dashboard */}
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate("AnalyticsDashboard")}
+          >
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconBox}>
+                <Text style={styles.cardIcon}>📊</Text>
+              </View>
+              <View style={styles.badgeDashboard}>
+                <Text style={styles.badgeDashboardText}>MY GRANTS</Text>
+              </View>
+            </View>
+            <Text style={styles.cardTitle}>View my dashboard</Text>
+            <Text style={styles.cardDesc}>
+              Track your saved grants, proposal pipeline, application history, and upcoming deadlines in one place.
+            </Text>
+            <View style={styles.cardFooter}>
+              <Text style={styles.cardActionText}>Open Dashboard →</Text>
+            </View>
+          </TouchableOpacity>
+
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -233,5 +257,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: COLORS.accent,
+  },
+  badgeDashboard: {
+    backgroundColor: "#9b59b622",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#9b59b666",
+  },
+  badgeDashboardText: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: "#9b59b6",
+    letterSpacing: 0.8,
   },
 });
