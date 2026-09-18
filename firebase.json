@@ -1,4 +1,17 @@
 {
+  "functions": [
+    {
+      "source": "functions/python",
+      "codebase": "grantflow-api",
+      "runtime": "python312",
+      "ignore": [
+        "venv",
+        ".venv",
+        "__pycache__",
+        ".git"
+      ]
+    }
+  ],
   "hosting": {
     "public": "dist",
     "ignore": [

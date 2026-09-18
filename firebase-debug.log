@@ -1,0 +1,42 @@
+[debug] [2026-09-18T20:14:38.819Z] ----------------------------------------------------------------------
+[debug] [2026-09-18T20:14:38.826Z] Command:       /usr/local/bin/node /Users/JeremyGillespie/.npm/_npx/ba4f1959e38407b5/node_modules/.bin/firebase deploy --only hosting --project grantflow-app-dev --non-interactive
+[debug] [2026-09-18T20:14:38.827Z] CLI Version:   15.30.2
+[debug] [2026-09-18T20:14:38.827Z] Platform:      darwin
+[debug] [2026-09-18T20:14:38.827Z] Node Version:  v24.18.0
+[debug] [2026-09-18T20:14:38.827Z] Detected Agent: antigravity
+[debug] [2026-09-18T20:14:38.827Z] Time:          Fri Sep 18 2026 16:14:38 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-09-18T20:14:38.827Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-09-18T20:14:42.627Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-09-18T20:14:42.627Z] > authorizing via signed-in user (jeremycgillespie@gmail.com)
+[debug] [2026-09-18T20:14:42.628Z] [iam] checking project grantflow-app-dev for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-09-18T20:14:42.650Z] Checked if tokens are valid: false, expires at: 1789749924563
+[debug] [2026-09-18T20:14:42.651Z] Checked if tokens are valid: false, expires at: 1789749924563
+[debug] [2026-09-18T20:14:42.651Z] > refreshing access token with scopes: []
+[debug] [2026-09-18T20:14:42.654Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-09-18T20:14:42.655Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-09-18T20:14:43.063Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-09-18T20:14:43.063Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-09-18T20:14:43.145Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/grantflow-app-dev:testIamPermissions [none]
+[debug] [2026-09-18T20:14:43.146Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/grantflow-app-dev:testIamPermissions  x-goog-user-project=grantflow-app-dev
+[debug] [2026-09-18T20:14:43.146Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/grantflow-app-dev:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-18T20:14:43.694Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/grantflow-app-dev:testIamPermissions 200
+[debug] [2026-09-18T20:14:43.694Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/grantflow-app-dev:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-09-18T20:14:43.695Z] Checked if tokens are valid: true, expires at: 1789766082063
+[debug] [2026-09-18T20:14:43.695Z] Checked if tokens are valid: true, expires at: 1789766082063
+[debug] [2026-09-18T20:14:43.695Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/grantflow-app-dev [none]
+[debug] [2026-09-18T20:14:43.930Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/grantflow-app-dev 200
+[debug] [2026-09-18T20:14:43.930Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/grantflow-app-dev {"projectId":"grantflow-app-dev","projectNumber":"686230365269","displayName":"GrantFlow","name":"projects/grantflow-app-dev","resources":{"hostingSite":"grantflow-app-dev"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_d2ad4708-e678-4623-bef4-98bf7784ce4d"}
+[info] 
+[info] === Deploying to 'grantflow-app-dev'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-09-18T20:14:43.936Z] Checked if tokens are valid: true, expires at: 1789766082063
+[debug] [2026-09-18T20:14:43.936Z] Checked if tokens are valid: true, expires at: 1789766082063
+[debug] [2026-09-18T20:14:43.936Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/grantflow-app-dev/sites/grantflow-app-dev [none]
+[debug] [2026-09-18T20:14:44.528Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/grantflow-app-dev/sites/grantflow-app-dev 200
+[debug] [2026-09-18T20:14:44.528Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/grantflow-app-dev/sites/grantflow-app-dev {"name":"projects/grantflow-app-dev/sites/grantflow-app-dev","defaultUrl":"https://grantflow-app-dev.web.app","type":"DEFAULT_SITE"}
+[debug] [2026-09-18T20:14:44.531Z] Checked if tokens are valid: true, expires at: 1789766082063
+[debug] [2026-09-18T20:14:44.531Z] Checked if tokens are valid: true, expires at: 1789766082063
+[debug] [2026-09-18T20:14:44.533Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/grantflow-app-dev/versions [none]
+[debug] [2026-09-18T20:14:44.533Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/grantflow-app-dev/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
