@@ -1,0 +1,26 @@
+// env.js
+import {
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+  MISTRAL_API_KEY,
+  STRIPE_PUBLISHABLE_KEY,
+  BACKEND_URL,
+} from '@env';
+
+export default {
+  firebase: {
+    apiKey: FIREBASE_API_KEY,
+    authDomain: FIREBASE_AUTH_DOMAIN,
+    projectId: FIREBASE_PROJECT_ID,
+    storageBucket: FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+    appId: FIREBASE_APP_ID,
+  },
+  mistralApiKey: MISTRAL_API_KEY,
+  stripePublishableKey: STRIPE_PUBLISHABLE_KEY,
+  backendUrl: BACKEND_URL,
+};

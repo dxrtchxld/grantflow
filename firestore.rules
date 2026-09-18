@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function validUserFields() {
+      let allowed = ['displayName', 'email', 'photoURL', 'createdAt', 'updatedAt'];
+      return request.resource.data.keys().hasOnly(allowed);
+    }
+
+    function validBusiness() {
+      let d = request.resource.data;
+      return d.businessName is string && d.businessName.size() < 128
+          && d.userId     is string
+          && d.state      is string && d.state.size() <= 2;
+    }
+
+    function validApplication() {
+      let d = request.resource.data;
+      return d.userId  is string
+          && d.grantId is string
+          && d.status  is string && d.status.size() < 32;
+    }
+
+    // Users — owner only, field-restricted writes
+    match /users/{userId} {
+      allow read:   if isOwner(userId);
+      allow create: if isOwner(userId) && validUserFields();
+      allow update: if isOwner(userId) && validUserFields();
+      allow delete: if isOwner(userId);
+
+      // Saved grants sub-collection — owner only
+      match /savedGrants/{grantId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Businesses — owner-scoped reads, validated writes
+    match /businesses/{businessId} {
+      allow read:   if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid && validBusiness();
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && validBusiness();
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // Grants — read-only for authenticated users; writes via Admin SDK / Cloud Functions only
+    match /grants/{grantId} {
+      allow read:  if isAuthenticated();
+      allow write: if false;
+    }
+
+    // Applications — owner-scoped, validated, deletable
+    match /applications/{appId} {
+      allow read:   if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid && validApplication();
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && validApplication();
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // LLC orders — owner-scoped, immutable after creation
+    match /llcOrders/{orderId} {
+      allow read:   if isAuthenticated() && resource.data.email == request.auth.token.email;
+      allow create: if isAuthenticated();
+      allow update, delete: if false; // Managed via Admin SDK only
+    }
+  }
+}
