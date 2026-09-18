@@ -29,51 +29,17 @@ import ComplianceReportScreen from "./screens/ComplianceReportScreen";
 
 const Stack = createStackNavigator();
 
-// ── Auth stack (unauthenticated) ──────────────────────────────────────────────
-function AuthNavigator() {
-  return (
-    <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login"    component={LoginScreen}    />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-    </Stack.Navigator>
-  );
-}
-
-// ── App stack (authenticated) ─────────────────────────────────────────────────
-function AppNavigator() {
-  return (
-    <Stack.Navigator initialRouteName="BusinessType" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="BusinessType"    component={BusinessTypeScreen}    />
-      <Stack.Screen name="BusinessDetails" component={BusinessDetailsScreen} />
-      <Stack.Screen name="BusinessName"    component={BusinessNameScreen}    />
-      <Stack.Screen name="LLCFormation"    component={LLCFormationScreen}    />
-      <Stack.Screen name="BusinessPlan"    component={BusinessPlanScreen}    />
-      <Stack.Screen name="GrantSearch"     component={GrantSearchScreen}     />
-      <Stack.Screen name="GrantDetail"     component={GrantDetailScreen}     />
-      <Stack.Screen name="DeadlineTracker" component={DeadlineTrackerScreen} />
-      <Stack.Screen name="AIChat"          component={AIChatScreen}          />
-      <Stack.Screen name="ComplianceReport" component={ComplianceReportScreen} />
-    </Stack.Navigator>
-  );
-}
-
-// ── Root ──────────────────────────────────────────────────────────────────────
+// ── Unified Navigator ─────────────────────────────────────────────────────────
 export default function App() {
   const [user, setUser] = useState(undefined); // undefined = auth state still resolving
 
   useEffect(() => {
-    // ✅ Auth gate: onAuthStateChanged drives which stack is shown.
-    //    - Returning signed-in users go straight to AppNavigator (skip Login).
-    //    - Signed-out or new users see AuthNavigator.
-    //    - All Firestore-writing screens sit behind AppNavigator and require
-    //      a valid Firebase session — matching the Firestore security rules.
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser ?? null);
     });
     return unsubscribe;
   }, []);
 
-  // Show spinner while Firebase resolves the persisted auth session
   if (user === undefined) {
     return (
       <View style={styles.loader}>
@@ -85,7 +51,28 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        {user ? <AppNavigator /> : <AuthNavigator />}
+        <Stack.Navigator
+          initialRouteName={user ? "BusinessType" : "Login"}
+          screenOptions={{ headerShown: false }}
+        >
+          {/* Auth & onboarding */}
+          <Stack.Screen name="Login"            component={LoginScreen}            />
+          <Stack.Screen name="Register"         component={RegisterScreen}         />
+          <Stack.Screen name="BusinessType"     component={BusinessTypeScreen}     />
+          <Stack.Screen name="BusinessDetails"  component={BusinessDetailsScreen}  />
+          <Stack.Screen name="BusinessName"     component={BusinessNameScreen}     />
+          <Stack.Screen name="LLCFormation"     component={LLCFormationScreen}     />
+          <Stack.Screen name="BusinessPlan"     component={BusinessPlanScreen}     />
+
+          {/* Grant flow */}
+          <Stack.Screen name="GrantSearch"      component={GrantSearchScreen}      />
+          <Stack.Screen name="GrantDetail"      component={GrantDetailScreen}      />
+          <Stack.Screen name="DeadlineTracker"  component={DeadlineTrackerScreen}  />
+
+          {/* AI & compliance */}
+          <Stack.Screen name="AIChat"           component={AIChatScreen}           />
+          <Stack.Screen name="ComplianceReport" component={ComplianceReportScreen} />
+        </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
   );
