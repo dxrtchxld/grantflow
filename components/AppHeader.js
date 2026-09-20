@@ -13,86 +13,41 @@ export default function AppHeader({ title, navigation, onBack, rightElement, sho
     }
   };
 
+  const handleAlerts = () => {
+    if (navigation?.navigate) {
+      navigation.navigate("AlertPreferences");
+    }
+  };
+
   return (
     <View style={[styles.header, style]}>
       {showBack ? (
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleBack}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          activeOpacity={0.7}
-          accessibilityLabel="Go back to prior page"
-          accessibilityRole="button"
-        >
+        <TouchableOpacity style={styles.backButton} onPress={handleBack} accessibilityLabel="Go back">
           <Text style={styles.backArrow}>←</Text>
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
-      ) : (
-        <View style={styles.placeholder} />
-      )}
+      ) : <View style={styles.placeholder} />}
 
-      {title ? (
-        <Text style={styles.title} numberOfLines={1}>
-          {title}
-        </Text>
-      ) : (
-        <View style={{ flex: 1 }} />
-      )}
+      {title ? <Text style={styles.title} numberOfLines={1}>{title}</Text> : <View style={{ flex: 1 }} />}
 
-      {rightElement ? (
-        <View style={styles.right}>{rightElement}</View>
-      ) : (
-        <View style={styles.placeholder} />
-      )}
+      <View style={styles.rightContainer}>
+        {rightElement}
+        <TouchableOpacity style={styles.bellBtn} onPress={handleAlerts}>
+          <Text style={styles.bellIcon}>🔔</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#1A1A2E",
-    borderBottomWidth: 1,
-    borderBottomColor: "#25253D",
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    backgroundColor: "#22223B",
-    borderWidth: 1,
-    borderColor: "#E2B96F33",
-  },
-  backArrow: {
-    fontSize: 16,
-    color: "#E2B96F",
-    fontWeight: "bold",
-    marginRight: 6,
-  },
-  backText: {
-    fontSize: 14,
-    color: "#E2B96F",
-    fontWeight: "700",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    textAlign: "center",
-    flex: 1,
-    marginHorizontal: 8,
-  },
-  placeholder: {
-    width: 60,
-  },
-  right: {
-    minWidth: 60,
-    alignItems: "flex-end",
-  },
+  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12, backgroundColor: "#1A1A2E", borderBottomWidth: 1, borderBottomColor: "#25253D" },
+  backButton: { flexDirection: "row", alignItems: "center", paddingVertical: 6, paddingHorizontal: 12, borderRadius: 8, backgroundColor: "#22223B", borderWidth: 1, borderColor: "#E2B96F33" },
+  backArrow: { fontSize: 16, color: "#E2B96F", fontWeight: "bold", marginRight: 6 },
+  backText: { fontSize: 14, color: "#E2B96F", fontWeight: "700" },
+  title: { fontSize: 16, fontWeight: "700", color: "#FFFFFF", textAlign: "center", flex: 1, marginHorizontal: 8 },
+  placeholder: { width: 60 },
+  rightContainer: { flexDirection: "row", alignItems: "center", minWidth: 60, justifyContent: "flex-end", gap: 10 },
+  bellBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: "#22223B", justifyContent: "center", alignItems: "center", borderWidth: 1, borderColor: "#E2B96F33" },
+  bellIcon: { fontSize: 14 }
 });
