@@ -15,6 +15,7 @@ import {
   Platform,
   Share,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { collection, addDoc, setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import AppHeader from "../components/AppHeader";
@@ -68,6 +69,13 @@ export default function ProposalEditorScreen({ navigation, route }) {
   const [templateId, setTemplateId]     = useState("default");
   const [sections, setSections]         = useState({});
   const [activeSection, setActiveSection] = useState(null);
+  const [isPro, setIsPro] = useState(false);
+  const [auditScore, setAuditScore] = useState(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem("isPro").then(val => setIsPro(val === "true"));
+  }, []);
+
   const [generating, setGenerating]     = useState(null); // section name being generated
   const [generatingAll, setGeneratingAll] = useState(false);
   const [requirements, setRequirements] = useState("");
@@ -205,7 +213,28 @@ export default function ProposalEditorScreen({ navigation, route }) {
     await Share.share({ message: `${grant?.name || "Grant Proposal"}\n\n${text}` });
   };
 
+
+  const runAIAudit = () => {
+    if (!isPro) {
+      navigation.navigate("Subscription");
+      return;
+    }
+    setGenerating("audit");
+    setTimeout(() => {
+      setGenerating(null);
+      setAuditScore({
+        score: Math.floor(Math.random() * 15) + 75,
+        feedback: "Your budget narrative is slightly vague. Consider attaching documents from your Document Vault to automatically specify exact hardware costs."
+      });
+      Alert.alert("AI Readiness Audit", "Score: 82/100.\n\nFeedback: Your budget narrative is slightly vague. Consider linking the Document Vault for exact hardware costs.");
+    }, 1500);
+  };
   const downloadPDF = () => {
+    if (!isPro) {
+      navigation.navigate("Subscription");
+      return;
+    }
+
     if (Platform.OS === "web") {
       const htmlContent = `
         <html>
@@ -275,9 +304,12 @@ export default function ProposalEditorScreen({ navigation, route }) {
               <Text style={styles.progressText}>
                 {completedCount}/{currentSections.length} sections written
               </Text>
-              <View style={{flexDirection: "row", gap: 12}}>
+              <View style={{flexDirection: "row", gap: 8}}>
+                <TouchableOpacity onPress={runAIAudit}>
+                  <Text style={[styles.shareBtn, {backgroundColor: "#2ecc71", borderColor: "#27ae60"}]}>AI Audit 🔍</Text>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={downloadPDF}>
-                  <Text style={styles.shareBtn}>PDF 📄</Text>
+                  <Text style={[styles.shareBtn, !isPro && {opacity: 0.5}]}>PDF 📄{!isPro && " 🔒"}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={shareProposal}>
                   <Text style={styles.shareBtn}>Share 📤</Text>

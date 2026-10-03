@@ -64,6 +64,8 @@ import ProposalEditorScreen      from "./screens/ProposalEditorScreen";
 import AnalyticsDashboardScreen  from "./screens/AnalyticsDashboardScreen";
 import TeamSettingsScreen from "./screens/TeamSettingsScreen";
 import AlertPreferencesScreen from "./screens/AlertPreferencesScreen";
+import DocumentVaultScreen from "./screens/DocumentVaultScreen";
+import SubscriptionScreen from "./screens/SubscriptionScreen";
 
 const Stack = createStackNavigator();
 
