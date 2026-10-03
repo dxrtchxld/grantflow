@@ -7,6 +7,8 @@ import {
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import AppHeader from "../components/AppHeader";
+import EligibilityMatrixCard from "../components/EligibilityMatrixCard";
+import { calculatePursuitEconomics } from "../services/eligibilityEngine";
 import { chat } from "../services/aiService";
 
 const COLORS = {
