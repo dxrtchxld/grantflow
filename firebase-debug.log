@@ -1,0 +1,17 @@
+[debug] [2026-10-03T15:55:53.098Z] ----------------------------------------------------------------------
+[debug] [2026-10-03T15:55:53.176Z] Command:       /usr/local/bin/node /Users/JeremyGillespie/.npm/_npx/ba4f1959e38407b5/node_modules/.bin/firebase deploy --only hosting --project grantflow-app-dev --non-interactive
+[debug] [2026-10-03T15:55:53.178Z] CLI Version:   15.32.1
+[debug] [2026-10-03T15:55:53.247Z] Platform:      darwin
+[debug] [2026-10-03T15:55:53.283Z] Node Version:  v24.18.0
+[debug] [2026-10-03T15:55:53.323Z] Detected Agent: antigravity
+[debug] [2026-10-03T15:55:53.323Z] Time:          Sat Oct 03 2026 11:55:53 GMT-0400 (Eastern Daylight Time)
+[debug] [2026-10-03T15:55:53.323Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-10-03T15:56:05.225Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-10-03T15:56:05.228Z] > authorizing via signed-in user (jeremycgillespie@gmail.com)
+[debug] [2026-10-03T15:56:05.228Z] [iam] checking project grantflow-app-dev for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-10-03T15:56:05.284Z] Checked if tokens are valid: false, expires at: 1791041705484
+[debug] [2026-10-03T15:56:05.287Z] Checked if tokens are valid: false, expires at: 1791041705484
+[debug] [2026-10-03T15:56:05.288Z] > refreshing access token with scopes: []
+[debug] [2026-10-03T15:56:05.294Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-10-03T15:56:05.294Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
